@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OyenLingo - Belajar Bahasa Inggris bersama Kucing Orange</title>
+  <meta name="description" content="Platform belajar Bahasa Inggris gratis yang interaktif dan menyenangkan dengan maskot Kucing Orange 'Oyen' dan soal bertenaga AI.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-section">
+          <div class="brand-logo">🐱</div>
+          <h1 class="brand-name">OyenLingo</h1>
+        </div>
+        
+        <nav class="nav-menu">
+          <a href="#" class="nav-item active" id="nav-learn" onclick="switchPage('learn')">
+            <span class="nav-icon">📚</span>
+            <span>Belajar</span>
+          </a>
+          <a href="#" class="nav-item" id="nav-ai" onclick="switchPage('ai')">
+            <span class="nav-icon">✨</span>
+            <span>AI Generator</span>
+          </a>
+          <a href="#" class="nav-item" id="nav-realai" onclick="switchPage('realai')">
+            <span class="nav-icon">🤖</span>
+            <span>Claude AI</span>
+          </a>
+          <a href="#" class="nav-item" id="nav-leaderboard" onclick="switchPage('leaderboard')">
+            <span class="nav-icon">🏆</span>
+            <span>Peringkat</span>
+          </a>
+          <a href="#" class="nav-item" id="nav-profile" onclick="switchPage('profile')">
+            <span class="nav-icon">👤</span>
+            <span>Profil</span>
+          </a>
+        </nav>
+      </div>
+      <div class="sidebar-footer">
+        <div class="profile-avatar">
+          <!-- Cute default cat profile icon using inline SVG -->
+          <svg viewBox="0 0 100 100" width="100%" height="100%">
+            <circle cx="50" cy="50" r="50" fill="#FFB347" />
+            <circle cx="35" cy="45" r="7" fill="#4A3728" />
+            <circle cx="65" cy="45" r="7" fill="#4A3728" />
+            <polygon points="50,55 45,50 55,50" fill="#FF6B6B" />
+            <path d="M 45 60 Q 50 63 55 60" stroke="#4A3728" stroke-width="3" stroke-linecap="round" fill="none" />
+          </svg>
+        </div>
+        <div class="profile-info">
+          <span class="profile-username" id="footer-username">Pengguna</span>
+          <span class="profile-rank" id="footer-user-rank">Pembelajar Pemula</span>
+        </div>
+      </div>
+    </aside>
+    <!-- MAIN INTERFACE PAGE -->
+    <main class="main-content">
+      
+      <!-- TOP STATUS BAR -->
+      <div class="content-container active-page" id="page-wrapper">
+        <header class="top-stats-bar">
+          <div class="stat-badge streak" title="Streak Hari Aktif">
+            <span>🔥</span> <span id="stat-streak-val">0</span> Hari
+          </div>
+          <div class="stat-badge xp" title="Total XP Terkumpul">
+            <span>⚡</span> <span id="stat-xp-val">0</span> XP
+          </div>
+          <div class="stat-badge heart" title="Sisa Nyawa (Mengisi otomatis setiap 5 menit)">
+            <span>❤️</span> <span id="stat-hearts-val">5</span>
+            <button onclick="refillHearts()" style="font-size:12px; margin-left:5px; color:var(--color-primary); text-decoration:underline;">Isi Ulang</button>
+          </div>
+        </header>
+        <!-- PAGE 1: BELAJAR (LEVEL PATH MAP) -->
+        <section class="page-content" id="page-learn">
+          <h2 style="margin-bottom: 10px;">Jalur Pembelajaran</h2>
+          <p style="color:var(--color-text-muted); margin-bottom: 30px;">Selesaikan level-level di bawah untuk melatih kemampuan Bahasa Inggris Anda!</p>
+          
+          <div class="level-path" id="level-map-container">
+            <!-- Dynamic Levels loaded via levels.js & app.js -->
+          </div>
+        </section>
+        <!-- PAGE 2: AI GENERATOR -->
+        <section class="page-content hidden" id="page-ai">
+          <div class="ai-panel-card">
+            <div class="ai-header">
+              <div class="ai-avatar-wrapper">🧠</div>
+              <div>
+                <h2 class="ai-title">AI Question Generator</h2>
+                <p class="ai-subtitle">Oyen AI merakit soal kustom secara langsung berdasarkan minat Anda.</p>
+              </div>
+            </div>
+            <p style="font-weight:700; margin-bottom:12px; font-size:15px;">Pilih Topik Preset Cepat:</p>
+            <div class="preset-topics-grid">
+              <button class="preset-chip" onclick="selectPreset('restoran')">
+                <span style="font-size: 24px;">☕</span>
+                <span>Di Kafe & Restoran</span>
+              </button>
+              <button class="preset-chip" onclick="selectPreset('liburan')">
+                <span style="font-size: 24px;">✈️</span>
+                <span>Liburan di Pantai</span>
+              </button>
+              <button class="preset-chip" onclick="selectPreset('kerja')">
+                <span style="font-size: 24px;">💼</span>
+                <span>Wawancara Kerja</span>
+              </button>
+            </div>
+            <div class="custom-prompt-input-group">
+              <label class="custom-prompt-label" for="custom-topic-input">Atau Masukkan Topik Kustom Anda Sendiri:</label>
+              <input type="text" id="custom-topic-input" class="custom-input" placeholder="Contoh: Bermain game, membeli baju di pasar, dll...">
+            </div>
+            <button class="btn-generate-ai" id="btn-start-ai" onclick="triggerAIGeneration()">
+              <span>✨</span> Hasilkan Kuis dengan AI
+            </button>
+            <!-- AI Log Terminal Simulator -->
+            <div class="ai-terminal" id="ai-log-terminal">
+              <div class="terminal-title">> Oyen AI Neural Engine Console v1.0.0</div>
+              <div id="terminal-lines-container"></div>
+            </div>
+          </div>
+        </section>
+        <!-- PAGE 2B: CLAUDE REAL AI GENERATOR -->
+        <section class="page-content hidden" id="page-realai">
+          <div class="ai-panel-card">
+            <div class="ai-header">
+              <div class="ai-avatar-wrapper">🤖</div>
+              <div>
+                <h2 class="ai-title">Claude AI Quiz Generator</h2>
+                <p class="ai-subtitle">Soal dibuat langsung oleh Claude AI — unik, relevan, dan bervariasi setiap sesi!</p>
+              </div>
+            </div>
+
+            <!-- Topic Input -->
+            <div class="custom-prompt-input-group" style="margin-top:20px;">
+              <label class="custom-prompt-label" for="real-ai-topic-input">Topik Bahasa Inggris yang Ingin Dipelajari:</label>
+              <input
+                type="text"
+                id="real-ai-topic-input"
+                class="custom-input"
+                placeholder="Contoh: daily routines, shopping at a supermarket, health..."
+              />
+            </div>
+
+            <!-- Level Selector -->
+            <div class="custom-prompt-input-group" style="margin-top:14px;">
+              <label class="custom-prompt-label" for="real-ai-level-select">Pilih Level Kesulitan:</label>
+              <select id="real-ai-level-select" class="custom-input" style="cursor:pointer;">
+                <option value="beginner">🟢 Pemula (A1–A2)</option>
+                <option value="elementary">🔵 Dasar (A2–B1)</option>
+                <option value="intermediate" selected>🟡 Menengah (B1–B2)</option>
+                <option value="advanced">🔴 Lanjut (C1–C2)</option>
+              </select>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="btn-generate-ai" id="btn-start-real-ai" onclick="triggerRealAIGeneration()">
+              <span>🤖</span> Hasilkan 10 Soal dengan Claude AI
+            </button>
+
+            <!-- Error Box -->
+            <div id="real-ai-error-box" style="display:none; background:#FFF0F0; border:1px solid #FFB3B3; border-radius:10px; padding:14px; margin-top:14px; color:#C0392B; font-size:14px;"></div>
+
+            <!-- Terminal Log -->
+            <div class="ai-terminal" id="real-ai-terminal" style="display:none;">
+              <div class="terminal-title">> Claude AI Engine — OyenLingo v2.0</div>
+              <div id="real-ai-terminal-lines"></div>
+            </div>
+
+            <!-- Info note -->
+            <p style="margin-top:16px; font-size:12px; color:var(--color-text-muted); line-height:1.6;">
+              💡 <strong>Tips:</strong> Topik dalam Bahasa Inggris menghasilkan soal yang lebih akurat. Contoh: <em>"ordering food at a restaurant"</em>, <em>"talking about hobbies"</em>, <em>"job interview phrases"</em>.
+            </p>
+          </div>
+        </section>
+        <!-- PAGE 3: LEADERBOARD -->
+        <section class="page-content hidden" id="page-leaderboard">
+          <div class="leaderboard-card">
+            <h2>🏆 Papan Peringkat Mingguan</h2>
+            <p style="color:var(--color-text-muted); margin-bottom: 20px;">Bersainglah dengan kucing-kucing hebat lainnya!</p>
+            
+            <div class="leaderboard-list" id="leaderboard-container">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </section>
+        <!-- PAGE 4: PROFILE -->
+        <section class="page-content hidden" id="page-profile">
+          <div class="profile-card">
+            <div class="profile-main-avatar">
+              <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <circle cx="50" cy="50" r="50" fill="#FFB347" />
+                <circle cx="35" cy="45" r="7" fill="#4A3728" />
+                <circle cx="65" cy="45" r="7" fill="#4A3728" />
+                <polygon points="50,55 45,50 55,50" fill="#FF6B6B" />
+                <path d="M 45 60 Q 50 63 55 60" stroke="#4A3728" stroke-width="3" stroke-linecap="round" fill="none" />
+              </svg>
+            </div>
+            <h2 id="profile-display-name" style="margin-bottom: 6px;">Pengguna OyenLingo</h2>
+            <p id="profile-title" style="color:var(--color-text-muted); margin-bottom: 24px;">Level Pembelajar: Pemula</p>
+            
+            <div class="victory-stats" style="margin-bottom: 30px;">
+              <div class="victory-stat-card">
+                <div class="victory-stat-val" id="profile-stat-xp">0</div>
+                <div class="victory-stat-label">Total XP</div>
+              </div>
+              <div class="victory-stat-card">
+                <div class="victory-stat-val" id="profile-stat-streak">0</div>
+                <div class="victory-stat-label">Streak Hari</div>
+              </div>
+              <div class="victory-stat-card">
+                <div class="victory-stat-val" id="profile-stat-levels">0</div>
+                <div class="victory-stat-label">Level Diselesaikan</div>
+              </div>
+            </div>
+            <button class="btn-reset-data" onclick="resetAllProgress()">
+              ⚠️ Hapus & Reset Semua Data Progres
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+    <!-- FLOATING MASCOT SIDE PANEL (OYEN CAT) -->
+    <div class="mascot-side-panel" id="mascot-placeholder">
+      <!-- Injected SVG via mascot.js -->
+    </div>
+  </div>
+  <!-- INTERACTIVE QUIZ OVERLAY MODAL -->
+  <div class="quiz-overlay" id="quiz-modal">
+    <div class="muted-badge" id="btn-sound-mute" onclick="toggleMuteState()" title="Mute Suara">
+      🔊
+    </div>
+    
+    <header class="quiz-header">
+      <button class="btn-close-quiz" onclick="quitQuizConfirm()">✕</button>
+      <div class="quiz-progress-container">
+        <div class="quiz-progress-bar" id="quiz-progress-indicator"></div>
+      </div>
+      <div class="quiz-hearts">
+        <span>❤️</span> <span id="quiz-hearts-count">5</span>
+      </div>
+    </header>
+    <div class="quiz-body">
+      <!-- 1. Exercise Core Container -->
+      <div class="quiz-card" id="quiz-question-card">
+        <h3 class="quiz-question-title" id="quiz-question-text">Bagaimana cara menyapa kucing?</h3>
+        
+        <!-- Interactive Exercise Layout Placeholders -->
+        <div id="quiz-interactive-area">
+          <!-- Choice options / Word block drag trays / Word matching pairs grids loaded here -->
+        </div>
+      </div>
+      <!-- 2. Victory/Completion Container -->
+      <div class="victory-screen" id="quiz-victory-screen">
+        <h2 class="victory-title">🎉 Sesi Selesai!</h2>
+        <div class="victory-mascot-container" id="victory-mascot-anchor"></div>
+        <p style="font-weight: 700; font-size:18px;">Luar biasa! Oyen bangga padamu!</p>
+        
+        <div class="victory-stats">
+          <div class="victory-stat-card">
+            <div class="victory-stat-val">+<span id="victory-xp-earned">10</span></div>
+            <div class="victory-stat-label">XP Diperoleh</div>
+          </div>
+          <div class="victory-stat-card">
+            <div class="victory-stat-val">100%</div>
+            <div class="victory-stat-label">Ketepatan</div>
+          </div>
+        </div>
+        <button class="btn-victory-continue" onclick="closeQuizModal()">
+          Lanjutkan Ke Jalur Belajar
+        </button>
+      </div>
+    </div>
+    <!-- FEEDBACK ACTIONS BOTTOM BAR -->
+    <footer class="quiz-footer" id="quiz-modal-footer">
+      <div class="quiz-footer-content">
+        <div class="feedback-box hidden" id="quiz-feedback-box">
+          <div class="feedback-icon" id="quiz-feedback-icon">✓</div>
+          <div class="feedback-text">
+            <span class="feedback-title" id="quiz-feedback-title">Jawaban Benar!</span>
+            <span class="feedback-desc" id="quiz-feedback-desc">Penjelasan akan ditaruh di sini.</span>
+          </div>
+        </div>
+        <button class="btn-check-answer disabled" id="btn-quiz-action" onclick="handleQuizActionButton()">Periksa Jawaban</button>
+      </div>
+    </footer>
+  </div>
+  <!-- LOAD JAVASCRIPT CONTROLLERS -->
+  <script src="js/sounds.js"></script>
+  <script src="js/mascot.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/ai-generator.js"></script>
+  <script src="js/ai-generator-real.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
